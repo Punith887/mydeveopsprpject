@@ -1,0 +1,32 @@
+name: Deploy Website to Main
+
+# Trigger whenever code is pushed or merged to the main branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Download repo files to the GitHub runner machine
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Show commit and author metadata
+      - name: Display Commit Metadata
+        run: |
+          echo "Commit SHA: ${{ github.sha }}"
+          echo "Pushed by: ${{ github.actor }}"
+          echo "Commit message: ${{ github.event.head_commit.message }}"
+
+      # Step 3: Make the script executable and run it
+      - name: Run Validation and Deployment Script
+        env:
+          TRIGGERED_USER: ${{ github.actor }}
+          COMMIT_HASH: ${{ github.sha }}
+        run: |
+          chmod +x scripts/deploy.sh
+          ./scripts/deploy.sh
